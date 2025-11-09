@@ -1,15 +1,22 @@
 // === Word List ===
-let words = [];
-
-async function loadWordList() {
-  const res = await fetch('https://raw.githubusercontent.com/tabatkins/wordle-list/main/words');
-  const text = await res.text();
-  words = text
-    .split('\n')
-    .map(w => w.trim().toLowerCase())
-    .filter(w => w.length === 5);
-  startGame(); // start once words are loaded
-}
+// === Word List ===
+const words = [
+  "apple","grape","peach","lemon","mango","melon","cherry","zebra","tiger",
+  "eagle","shark","whale","snake","camel","horse","chair","table","plant",
+  "bread","toast","dream","light","night","angel","ghost","magic","storm",
+  "cloud","green","black","white","amber","coral","beach","coast","river",
+  "music","sound","score","money","price","trade","heart","truth","faith",
+  "peace","laugh","smile","grace","honor","trust","clear","smart","brand",
+  "brave","candy","dance","flash","happy","house","knife","label","laser",
+  "lemon","lunch","model","night","order","paint","party","piano","pilot",
+  "plate","price","quiet","radio","range","right","scale","shade","share",
+  "shine","shock","short","sight","skill","sleep","smoke","snake","solar",
+  "solid","sound","south","space","sport","stand","start","steel","stern","stone",
+  "storm","story","sugar","sweet","table","teach","thank","thing","three",
+  "tiger","today","touch","tower","track","trade","train","treat","trend",
+  "trust","truth","under","unity","value","video","voice","watch","water",
+  "white","whole","woman","world","write","wreck"
+];
 
 // === Variables ===
 let word = "";
@@ -211,7 +218,8 @@ shareBtn.addEventListener("click", () => {
 });
 
 // === Start Game ===
-loadWordList();
+startGame();
+
 
 
 
