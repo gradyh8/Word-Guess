@@ -5,6 +5,8 @@ const words = [
   "chair", "table", "plant", "bread", "toast", "dream", "light", "night"
 ];
 
+curl -s https://raw.githubusercontent.com/tabatkins/wordle-list/main/words | grep ...
+
 let word = "";
 let currentGuess = "";
 let row = 0;
@@ -141,3 +143,4 @@ shareBtn.addEventListener("click", () => {
 
 // === Start Game on Load ===
 startGame();
+
