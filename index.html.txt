@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Word Guess</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main>
+    <h1>Word Guess</h1>
+    <p id="subtitle">Guess the 5-letter word in 6 tries.</p>
+
+    <div id="board" aria-label="Guess board"></div>
+
+    <div id="keyboard" aria-label="On-screen keyboard"></div>
+
+    <div id="message" role="status" aria-live="polite"></div>
+
+    <div id="controls">
+      <button id="newGame">New Game</button>
+      <button id="share">Share</button>
+    </div>
+    <footer>
+      <small>Made by you • No ads • Words from a built-in list</small>
+    </footer>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
