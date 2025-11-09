@@ -154,28 +154,37 @@ function checkGuess() {
   const letterCounts = {};
   for (let l of word) letterCounts[l] = (letterCounts[l] || 0) + 1;
 
-  // First pass: mark correct letters
+  const keyUpdates = {}; // store status for each letter
+
+  // First pass: correct letters (green)
   for (let i = 0; i < 5; i++) {
     if (guess[i] === word[i]) {
       cells[i].style.background = "var(--correct)";
-      updateKeyColor(guess[i], "correct");
       letterCounts[guess[i]]--;
+      keyUpdates[guess[i]] = "correct"; // mark key as correct
     }
   }
 
-  // Second pass: mark present/absent letters
+  // Second pass: present (yellow) or absent (gray)
   for (let i = 0; i < 5; i++) {
-    if (cells[i].style.background === "var(--correct)") continue; // already correct
+    if (cells[i].style.background === "var(--correct)") continue;
 
     if (word.includes(guess[i]) && letterCounts[guess[i]] > 0) {
       cells[i].style.background = "var(--present)";
-      updateKeyColor(guess[i], "present");
       letterCounts[guess[i]]--;
+      // Only set yellow if the key isn't already green
+      if (!keyUpdates[guess[i]]) keyUpdates[guess[i]] = "present";
     } else {
       cells[i].style.background = "var(--absent)";
-      updateKeyColor(guess[i], "absent");
+      // Only set gray if the key isn't green or yellow yet
+      if (!keyUpdates[guess[i]]) keyUpdates[guess[i]] = "absent";
     }
   }
+
+  // Update keyboard
+  Object.keys(keyUpdates).forEach(letter => {
+    updateKeyColor(letter, keyUpdates[letter]);
+  });
 
   if (guess === word) message.textContent = "You won! 🎉";
   else if (row === maxRows - 1) message.textContent = `You lose! The word was ${word.toUpperCase()}`;
@@ -203,6 +212,7 @@ shareBtn.addEventListener("click", () => {
 
 // === Start Game ===
 loadWordList();
+
 
 
 
