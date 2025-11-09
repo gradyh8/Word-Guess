@@ -1,11 +1,13 @@
 // === Word List ===
-
 let words = [];
 
 async function loadWordList() {
   const res = await fetch('https://raw.githubusercontent.com/tabatkins/wordle-list/main/words');
   const text = await res.text();
-  words = text.split('\n').map(w => w.trim().toLowerCase()).filter(w => w.length === 5);
+  words = text
+    .split('\n')
+    .map(w => w.trim().toLowerCase())
+    .filter(w => w.length === 5);
   startGame(); // start once words are loaded
 }
 
@@ -45,52 +47,24 @@ function createKeyboard() {
     "ZXCVBNM"
   ];
 
+  const keySpacing = ["0px", "20px", "40px"]; // left padding for row 2 & 3
+
   layout.forEach((line, idx) => {
     const rowDiv = document.createElement("div");
     rowDiv.style.display = "flex";
     rowDiv.style.justifyContent = "center";
     rowDiv.style.marginBottom = "5px";
+    rowDiv.style.paddingLeft = keySpacing[idx];
 
-    // Add Enter before last row
-    if (idx === 2) {
-      const enterKey = createKey("Enter");
-      rowDiv.appendChild(enterKey);
-    }
+    // Add Enter to start of row 3
+    if (idx === 2) rowDiv.appendChild(createKey("Enter"));
 
     for (let letter of line) {
-      const key = createKey(letter);
-      rowDiv.appendChild(key);
+      rowDiv.appendChild(createKey(letter));
     }
-    const keySpacing = ["", " ", "  "]; // adds indentation for rows 2 and 3
-layout.forEach((line, idx) => {
-  const rowDiv = document.createElement("div");
-  rowDiv.style.display = "flex";
-  rowDiv.style.justifyContent = "center";
-  rowDiv.style.marginBottom = "5px";
 
-  // add spacing
-  if (keySpacing[idx]) {
-    const spacer = document.createElement("div");
-    spacer.style.width = `${keySpacing[idx].length * 10}px`;
-    rowDiv.appendChild(spacer);
-  }
-
-  if (idx === 2) rowDiv.appendChild(createKey("Enter"));
-
-  for (let letter of line) {
-    rowDiv.appendChild(createKey(letter));
-  }
-
-  if (idx === 2) rowDiv.appendChild(createKey("⌫"));
-
-  keyboard.appendChild(rowDiv);
-});
-
-    // Add Backspace after last row
-    if (idx === 2) {
-      const backKey = createKey("⌫");
-      rowDiv.appendChild(backKey);
-    }
+    // Add Backspace to end of row 3
+    if (idx === 2) rowDiv.appendChild(createKey("⌫"));
 
     keyboard.appendChild(rowDiv);
   });
@@ -157,21 +131,20 @@ function updateBoard() {
 function checkGuess() {
   const currentRow = board.children[row];
   const cells = currentRow.querySelectorAll(".cell");
-  const guess = currentGuess;
 
   for (let i = 0; i < 5; i++) {
     cells[i].style.background = "var(--cell)";
 
-    if (guess[i] === word[i]) {
+    if (currentGuess[i] === word[i]) {
       cells[i].style.background = "var(--correct)";
-    } else if (word.includes(guess[i])) {
+    } else if (word.includes(currentGuess[i])) {
       cells[i].style.background = "var(--present)";
     } else {
       cells[i].style.background = "var(--absent)";
     }
   }
 
-  if (guess === word) {
+  if (currentGuess === word) {
     message.textContent = "You won! 🎉";
   } else if (row === maxRows - 1) {
     message.textContent = `You lose! The word was ${word.toUpperCase()}`;
@@ -198,4 +171,3 @@ shareBtn.addEventListener("click", () => {
 
 // === Start Game ===
 loadWordList();
-
