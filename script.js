@@ -127,6 +127,19 @@ function updateBoard() {
   });
 }
 
+// === Update keyboard key color ===
+function updateKeyColor(letter, status) {
+  const keys = keyboard.querySelectorAll(".key");
+  keys.forEach(key => {
+    if (key.textContent.toLowerCase() === letter) {
+      // Only upgrade color: correct > present > absent
+      if (status === "correct") key.classList.add("correct");
+      else if (status === "present" && !key.classList.contains("correct")) key.classList.add("present");
+      else if (status === "absent" && !key.classList.contains("correct") && !key.classList.contains("present")) key.classList.add("absent");
+    }
+  });
+}
+
 // === Check Guess ===
 function checkGuess() {
   const currentRow = board.children[row];
@@ -137,10 +150,13 @@ function checkGuess() {
 
     if (currentGuess[i] === word[i]) {
       cells[i].style.background = "var(--correct)";
+      updateKeyColor(currentGuess[i], "correct");
     } else if (word.includes(currentGuess[i])) {
       cells[i].style.background = "var(--present)";
+      updateKeyColor(currentGuess[i], "present");
     } else {
       cells[i].style.background = "var(--absent)";
+      updateKeyColor(currentGuess[i], "absent");
     }
   }
 
@@ -153,6 +169,8 @@ function checkGuess() {
     currentGuess = "";
   }
 }
+
+
 
 // === Listeners ===
 document.addEventListener("keydown", (e) => {
@@ -171,3 +189,4 @@ shareBtn.addEventListener("click", () => {
 
 // === Start Game ===
 loadWordList();
+
