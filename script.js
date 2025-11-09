@@ -148,32 +148,42 @@ function updateKeyColor(letter, status) {
 function checkGuess() {
   const currentRow = board.children[row];
   const cells = currentRow.querySelectorAll(".cell");
+  const guess = currentGuess;
 
+  // Count letters in the word
+  const letterCounts = {};
+  for (let l of word) letterCounts[l] = (letterCounts[l] || 0) + 1;
+
+  // First pass: mark correct letters
   for (let i = 0; i < 5; i++) {
-    cells[i].style.background = "var(--cell)";
-
-    if (currentGuess[i] === word[i]) {
+    if (guess[i] === word[i]) {
       cells[i].style.background = "var(--correct)";
-      updateKeyColor(currentGuess[i], "correct");
-    } else if (word.includes(currentGuess[i])) {
-      cells[i].style.background = "var(--present)";
-      updateKeyColor(currentGuess[i], "present");
-    } else {
-      cells[i].style.background = "var(--absent)";
-      updateKeyColor(currentGuess[i], "absent");
+      updateKeyColor(guess[i], "correct");
+      letterCounts[guess[i]]--;
     }
   }
 
-  if (currentGuess === word) {
-    message.textContent = "You won! 🎉";
-  } else if (row === maxRows - 1) {
-    message.textContent = `You lose! The word was ${word.toUpperCase()}`;
-  } else {
+  // Second pass: mark present/absent letters
+  for (let i = 0; i < 5; i++) {
+    if (cells[i].style.background === "var(--correct)") continue; // already correct
+
+    if (word.includes(guess[i]) && letterCounts[guess[i]] > 0) {
+      cells[i].style.background = "var(--present)";
+      updateKeyColor(guess[i], "present");
+      letterCounts[guess[i]]--;
+    } else {
+      cells[i].style.background = "var(--absent)";
+      updateKeyColor(guess[i], "absent");
+    }
+  }
+
+  if (guess === word) message.textContent = "You won! 🎉";
+  else if (row === maxRows - 1) message.textContent = `You lose! The word was ${word.toUpperCase()}`;
+  else {
     row++;
     currentGuess = "";
   }
 }
-
 
 
 // === Listeners ===
@@ -193,5 +203,6 @@ shareBtn.addEventListener("click", () => {
 
 // === Start Game ===
 loadWordList();
+
 
 
