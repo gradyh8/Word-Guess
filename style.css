@@ -161,3 +161,11 @@ footer {
     align-items: center;
   }
 }
+
+.cell {
+  transition: transform 0.2s ease, background 0.3s ease;
+}
+
+.cell.flip {
+  transform: rotateX(90deg);
+}
