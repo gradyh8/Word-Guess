@@ -1,28 +1,13 @@
 // === Word List ===
-// (250 common 5-letter words for now — lightweight but good variety)
-const words = [
-  "apple","grape","peach","lemon","mango","melon","cherry","berry","zebra","tiger","eagle","shark",
-  "whale","snake","camel","horse","chair","table","plant","bread","toast","dream","light","night",
-  "angel","ghost","magic","storm","cloud","green","black","white","amber","coral","beach","coast",
-  "mount","river","ocean","space","earth","flame","spark","cabin","trail","music","sound","notes",
-  "drums","gamer","fight","skate","chess","score","track","court","money","price","coins","trade",
-  "heart","truth","faith","peace","laugh","smile","grace","honor","trust","clear","smart","blaze",
-  "brand","brave","bring","broad","bloom","brush","candy","creek","dance","dream","flame","flash",
-  "glove","grain","grind","grape","great","grown","habit","happy","harsh","house","index","jelly",
-  "knife","known","label","laser","lemon","liver","lunch","magic","major","march","match","medal",
-  "metal","minor","model","music","night","noble","north","ocean","order","paint","paper","party",
-  "pearl","piano","pilot","plain","plant","plate","press","price","proud","quiet","radio","range",
-  "ready","right","river","round","royal","scale","score","shade","shake","shape","share","sharp",
-  "sheep","shelf","shine","shirt","shock","shoot","short","sight","skill","skirt","sleep","smart",
-  "smile","smoke","snake","solar","solid","sound","south","space","spare","speak","speed","spice",
-  "spine","spoke","sport","stage","stand","start","steel","stick","stone","store","storm","story",
-  "strip","style","sugar","sweet","swing","table","taste","teach","thank","their","theme","there",
-  "thing","think","three","throw","tiger","tight","title","today","token","touch","tough","tower",
-  "track","trade","train","treat","trend","trust","truth","under","unity","urban","usual","value",
-  "video","voice","watch","water","where","white","whole","woman","world","worry","worth","write"
-];
 
-curl -s https://raw.githubusercontent.com/tabatkins/wordle-list/main/words | grep ...
+let words = [];
+
+async function loadWordList() {
+  const res = await fetch('https://raw.githubusercontent.com/tabatkins/wordle-list/main/words');
+  const text = await res.text();
+  words = text.split('\n').map(w => w.trim().toLowerCase()).filter(w => w.length === 5);
+  startGame(); // start once words are loaded
+}
 
 // === Variables ===
 let word = "";
@@ -76,6 +61,30 @@ function createKeyboard() {
       const key = createKey(letter);
       rowDiv.appendChild(key);
     }
+    const keySpacing = ["", " ", "  "]; // adds indentation for rows 2 and 3
+layout.forEach((line, idx) => {
+  const rowDiv = document.createElement("div");
+  rowDiv.style.display = "flex";
+  rowDiv.style.justifyContent = "center";
+  rowDiv.style.marginBottom = "5px";
+
+  // add spacing
+  if (keySpacing[idx]) {
+    const spacer = document.createElement("div");
+    spacer.style.width = `${keySpacing[idx].length * 10}px`;
+    rowDiv.appendChild(spacer);
+  }
+
+  if (idx === 2) rowDiv.appendChild(createKey("Enter"));
+
+  for (let letter of line) {
+    rowDiv.appendChild(createKey(letter));
+  }
+
+  if (idx === 2) rowDiv.appendChild(createKey("⌫"));
+
+  keyboard.appendChild(rowDiv);
+});
 
     // Add Backspace after last row
     if (idx === 2) {
@@ -120,7 +129,14 @@ function handleKey(letter) {
 }
 
 function handleEnter() {
-  if (currentGuess.length === 5) checkGuess();
+  if (currentGuess.length !== 5) return;
+
+  if (!words.includes(currentGuess)) {
+    message.textContent = "Not a valid word!";
+    return;
+  }
+
+  checkGuess();
 }
 
 function handleBackspace() {
@@ -181,4 +197,5 @@ shareBtn.addEventListener("click", () => {
 });
 
 // === Start Game ===
-startGame();
+loadWordList();
+
