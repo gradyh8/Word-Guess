@@ -96,6 +96,9 @@ function startGame() {
 // === Input Handling ===
 function handleKey(letter) {
   if (message.textContent.includes("won") || message.textContent.includes("lose")) return;
+
+  message.textContent = ""; // clear previous messages
+
   if (currentGuess.length < 5) {
     currentGuess += letter;
     updateBoard();
@@ -116,6 +119,7 @@ function handleEnter() {
 function handleBackspace() {
   currentGuess = currentGuess.slice(0, -1);
   updateBoard();
+  message.textContent = ""; // clear previous messages
 }
 
 // === Update Board ===
@@ -189,4 +193,5 @@ shareBtn.addEventListener("click", () => {
 
 // === Start Game ===
 loadWordList();
+
 
