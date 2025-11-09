@@ -251,3 +251,149 @@ shareBtn.addEventListener('click', shareResult);
   }
 })();
 
+
+// === Word List ===
+const words = [
+  "apple", "grape", "peach", "lemon", "mango", "melon", "cherry", "berry",
+  "zebra", "tiger", "eagle", "shark", "whale", "snake", "camel", "horse",
+  "chair", "table", "plant", "bread", "toast", "dream", "light", "night"
+];
+
+// === Variables ===
+let word = "";
+let currentGuess = "";
+let row = 0;
+const maxRows = 6;
+const board = document.getElementById("board");
+const keyboard = document.getElementById("keyboard");
+const message = document.getElementById("message");
+
+// === Create Board ===
+function createBoard() {
+  board.innerHTML = "";
+  for (let i = 0; i < maxRows * 5; i++) {
+    const tile = document.createElement("div");
+    tile.classList.add("tile");
+    board.appendChild(tile);
+  }
+}
+
+// === Create Keyboard ===
+const keys = [
+  ..."QWERTYUIOP".split(""),
+  ..."ASDFGHJKL".split(""),
+  ..."ZXCVBNM".split("")
+];
+
+function createKeyboard() {
+  keyboard.innerHTML = "";
+  const rows = ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"];
+  rows.forEach(rowLetters => {
+    const rowDiv = document.createElement("div");
+    rowLetters.split("").forEach(letter => {
+      const key = document.createElement("button");
+      key.textContent = letter;
+      key.className = "key";
+      key.addEventListener("click", () => handleInput(letter.toLowerCase()));
+      rowDiv.appendChild(key);
+    });
+    keyboard.appendChild(rowDiv);
+  });
+
+  const enter = document.createElement("button");
+  enter.textContent = "Enter";
+  enter.className = "key wide";
+  enter.addEventListener("click", handleEnter);
+  keyboard.appendChild(enter);
+
+  const back = document.createElement("button");
+  back.textContent = "⌫";
+  back.className = "key wide";
+  back.addEventListener("click", handleBackspace);
+  keyboard.appendChild(back);
+}
+
+// === Game Logic ===
+function startGame() {
+  word = words[Math.floor(Math.random() * words.length)];
+  currentGuess = "";
+  row = 0;
+  message.textContent = "";
+  createBoard();
+  createKeyboard();
+  console.log("Word is:", word); // debug only
+}
+
+function handleInput(letter) {
+  if (currentGuess.length < 5 && row < maxRows) {
+    currentGuess += letter;
+    updateBoard();
+  }
+}
+
+function handleEnter() {
+  if (currentGuess.length === 5) {
+    checkGuess();
+  }
+}
+
+function handleBackspace() {
+  currentGuess = currentGuess.slice(0, -1);
+  updateBoard();
+}
+
+function updateBoard() {
+  const start = row * 5;
+  for (let i = 0; i < 5; i++) {
+    const tile = board.children[start + i];
+    tile.textContent = currentGuess[i] || "";
+  }
+}
+
+function checkGuess() {
+  const start = row * 5;
+  const guess = currentGuess;
+
+  for (let i = 0; i < 5; i++) {
+    const tile = board.children[start + i];
+    tile.classList.remove("correct", "present", "absent");
+
+    if (guess[i] === word[i]) {
+      tile.classList.add("correct");
+    } else if (word.includes(guess[i])) {
+      tile.classList.add("present");
+    } else {
+      tile.classList.add("absent");
+    }
+  }
+
+  if (guess === word) {
+    message.textContent = "You won! 🎉";
+  } else if (row === maxRows - 1) {
+    message.textContent = `You lose! The word was ${word.toUpperCase()}`;
+  } else {
+    row++;
+    currentGuess = "";
+  }
+}
+
+// === Keyboard + Buttons ===
+document.addEventListener("keydown", (e) => {
+  if (/^[a-zA-Z]$/.test(e.key)) handleInput(e.key.toLowerCase());
+  else if (e.key === "Enter") handleEnter();
+  else if (e.key === "Backspace") handleBackspace();
+});
+
+document.getElementById("newGame").addEventListener("click", startGame);
+
+// Share Button Placeholder
+document.getElementById("share").addEventListener("click", () => {
+  navigator.clipboard.writeText("Check out my Word Guess game!").then(() => {
+    message.textContent = "Link copied to clipboard!";
+  });
+});
+
+// Start game when page loads
+startGame();
+
+
