@@ -1,7 +1,7 @@
 // Minimal Word Guess (5-letter) — single file
 const WORDS = [
   "apple","party","grace","flute","crane","brave","light","stone","water","train",
-  "blush","pride","swing","chart","plane","shout","brain","stern","sound","frame,"audio","lymph","plair","plant"
+  "blush","pride","swing","chart","plane","shout","brain","stern","sound","frame","audio","lymph","plair","plant"
 ]; // keep a longer list in real game
 
 const WORD_LENGTH = 5;
@@ -250,3 +250,4 @@ shareBtn.addEventListener('click', shareResult);
     render();
   }
 })();
+
